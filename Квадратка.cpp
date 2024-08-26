@@ -8,6 +8,7 @@ const double EPSILON = 1e-9;
 void input(double *a, double *b, double *c);
 int SolveQuadratic(double a, double b, double c, double *x1, double *x2);
 void print(int roots, double x1, double x2);
+void clearbuf(void);
 
 int main()
 {
@@ -22,16 +23,28 @@ int main()
 
 void input(double *a, double *b, double *c) // Пользовательский ввод
 {
-    int count_params = scanf("%lg %lg %lg", a, b, c);
-    getchar();
+    int count_params;
+    int nextch;
 
-    while (count_params != 3)
+    for (;;)
     {
-        printf("Неверное число аргументов: %d\n", count_params);
-        printf("Попробуйте снова\n");
+        count_params = scanf("%lg %lg %lg", a, b, c);
+        nextch = getchar();
+        if (count_params == 3 && nextch == '\n')
+        {
+            break;
+        }
+        else if (count_params != 3)
+        {
+            printf("Неверное число допустимых аргументов: %d\n", count_params);
+        }
+        else
+        {
+            printf("Слишком много аргументов\n");
+            clearbuf();
+        }
 
-        count_params = scanf("\n%lg %lg %lg", a, b, c);
-        getchar();
+        printf("Попробуйте снова\n");
     }
 
 }
@@ -50,6 +63,7 @@ int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
         else
         {
             *x1 = -c / b;
+
             return 1;
         }
     }
@@ -63,12 +77,14 @@ int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
         else if (-EPSILON < d && d < EPSILON)
         {
             *x1 = -b / (2 * a);
+
             return 1;
         }
         else
         {
             *x1 = (-b - sqrt(d)) / (2 * a);
             *x2 = (-b + sqrt(d)) / (2 * a);
+
             return 2;
         }
     }
@@ -89,4 +105,10 @@ void print(int roots, double x1, double x2)
         default: printf("ОШИБКА: невозможное количество корней - %d", roots);
                 break;
     }
+}
+
+void clearbuf(void)
+{
+    while (getchar() != '\n')
+        ;
 }
