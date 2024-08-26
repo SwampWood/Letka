@@ -23,12 +23,15 @@ int main()
 void input(double *a, double *b, double *c) // Пользовательский ввод
 {
     int count_params = scanf("%lg %lg %lg", a, b, c);
+    getchar();
 
+    while (count_params != 3)
     {
         printf("Неверное число аргументов: %d\n", count_params);
         printf("Попробуйте снова\n");
 
-        count_params = scanf("%lg %lg %lg\n", a, b, c);
+        count_params = scanf("\n%lg %lg %lg", a, b, c);
+        getchar();
     }
 
 }
