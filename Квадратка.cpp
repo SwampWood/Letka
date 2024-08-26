@@ -2,45 +2,50 @@
 #include <TXLib.h>
 #include <math.h>
 
-const int INF_ROOTS = -1;
+const int INF = -1;
+int roots = 0;
 
-int main()
+void SolveQuadratic(double a, double b, double c, double *x1, double *x2)
 {
-    double a, b, c, d, x1 = 0, x2 = 0;
-    int roots = 0;
-    scanf("%lg %lg %lg", &a, &b, &c); // Пользовательский ввод
     if (a == 0) // Проверка на нулевые коэффициенты
     {
         if (b == 0)
         {
             if (c == 0)
-                roots = INF_ROOTS;
+                roots = INF;
             else
                 roots = 0;
         }
         else
         {
+            *x1 = -c / b;
             roots = 1;
-            x1 = c / b;
         }
     }
-    else // Решение через дискриминант
+    else
     {
-        d = b*b - 4*a*c;
+        double d = b*b - 4*a*c; // Решение через дискриминант
         if (d < 0)
             roots = 0;
         else if (d == 0)
         {
+            *x1 = -b / (2 * a);
             roots = 1;
-            x1 = -b / (2 * a);
         }
         else
         {
+            *x1 = (-b - sqrt(d)) / (2 * a);
+            *x2 = (-b + sqrt(d)) / (2 * a);
             roots = 2;
-            x1 = (-b - sqrt(d)) / (2 * a);
-            x2 = (-b + sqrt(d)) / (2 * a);
         }
     }
+}
+
+int main()
+{
+    double a = 0, b = 0, c = 0, x1 = 0, x2 = 0;
+    scanf("%lg %lg %lg", &a, &b, &c); // Пользовательский ввод
+    SolveQuadratic(a, b, c, &x1, &x2);
     switch (roots)
     {
         case 0: printf("Нет корней");
@@ -49,7 +54,7 @@ int main()
                 break;
         case 2: printf("x1 = %lg, x2 = %lg", x1, x2);
                 break;
-        case INF_ROOTS: printf("x - любое число");
+        case INF: printf("x - любое число");
                 break;
     }
 }
