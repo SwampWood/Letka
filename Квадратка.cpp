@@ -8,6 +8,7 @@ const double EPSILON = 1e-9;
 void input(double *a, double *b, double *c);
 int SolveQuadratic(double a, double b, double c, double *x1, double *x2);
 void print(int roots, double x1, double x2);
+bool eqzero(double n);
 void clearbuf(void);
 
 int main()
@@ -51,11 +52,11 @@ void input(double *a, double *b, double *c) // Пользовательский ввод
 
 int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
 {
-    if (-EPSILON < a && a < EPSILON) // Проверка на нулевые коэффициенты
+    if (eqzero(a)) // Проверка на нулевые коэффициенты
     {
-        if (-EPSILON < b && b < EPSILON)
+        if (eqzero(b))
         {
-            if (-EPSILON < c && c < EPSILON)
+            if (eqzero(c))
                 return INF;
             else
                 return 0;
@@ -74,7 +75,7 @@ int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
         {
             return 0;
         }
-        else if (-EPSILON < d && d < EPSILON)
+        else if (eqzero(d))
         {
             *x1 = -b / (2 * a);
 
@@ -111,4 +112,9 @@ void clearbuf(void)
 {
     while (getchar() != '\n')
         ;
+}
+
+bool eqzero(double n)
+{
+    return (-EPSILON < n && n < EPSILON);
 }
