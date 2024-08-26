@@ -9,7 +9,7 @@ void input(double *a, double *b, double *c);
 int SolveQuadratic(double a, double b, double c, double *x1, double *x2);
 void print(int roots, double x1, double x2);
 bool eqzero(double n);
-void clearbuf(void);
+void clearbuf(void); // очистка буфера ввода
 
 int main()
 {
@@ -25,13 +25,13 @@ int main()
 void input(double *a, double *b, double *c) // Пользовательский ввод
 {
     int count_params;
-    int nextch;
+    int next_ch;
 
-    for (;;)
+    while (true)
     {
         count_params = scanf("%lg %lg %lg", a, b, c);
-        nextch = getchar();
-        if (count_params == 3 && nextch == '\n')
+        next_ch = getchar();
+        if (count_params == 3 && next_ch == '\n')
         {
             break;
         }
