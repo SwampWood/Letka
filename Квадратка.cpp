@@ -2,36 +2,36 @@
 #include <TXLib.h>
 #include <math.h>
 
-const int INF = -1;
+enum {INF_ROOTS = -1, NO_ROOTS, ONE_ROOT, TWO_ROOTS};
 const double EPSILON = 1e-9;
 
-void input(double *a, double *b, double *c);
+void InputCoeffs(double *a, double *b, double *c);
 int SolveQuadratic(double a, double b, double c, double *x1, double *x2);
-void print(int roots, double x1, double x2);
-bool eqzero(double n);
-void clearbuf(void); // очистка буфера ввода
+void PrintSolution(int count_roots, double x1, double x2);
+int IsZero(double n);
+int ClearBuf(void); // очистка буфера ввода
 
 int main()
 {
     double a = 0, b = 0, c = 0, x1 = 0, x2 = 0;
 
-    input(&a, &b, &c);
+    InputCoeffs(&a, &b, &c);
 
-    int roots = SolveQuadratic(a, b, c, &x1, &x2);
+    int count_roots = SolveQuadratic(a, b, c, &x1, &x2);
 
-    print(roots, x1, x2);
+    PrintSolution(count_roots, x1, x2);
 }
 
-void input(double *a, double *b, double *c) // Пользовательский ввод
+void InputCoeffs(double *a, double *b, double *c) // Пользовательский ввод
 {
-    int count_params;
-    int next_ch;
+    int count_params = 0;
+    int count_excess_ch = 0; // количество лишних символов (не пробелов) после ввода
 
     while (true)
     {
         count_params = scanf("%lg %lg %lg", a, b, c);
-        next_ch = getchar();
-        if (count_params == 3 && next_ch == '\n')
+        count_excess_ch = ClearBuf();
+        if (count_params == 3 && count_excess_ch == 0)
         {
             break;
         }
@@ -42,7 +42,6 @@ void input(double *a, double *b, double *c) // Пользовательский ввод
         else
         {
             printf("Слишком много аргументов\n");
-            clearbuf();
         }
 
         printf("Попробуйте снова\n");
@@ -52,20 +51,20 @@ void input(double *a, double *b, double *c) // Пользовательский ввод
 
 int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
 {
-    if (eqzero(a)) // Проверка на нулевые коэффициенты
+    if (IsZero(a)) // Проверка на нулевые коэффициенты
     {
-        if (eqzero(b))
+        if (IsZero(b))
         {
-            if (eqzero(c))
-                return INF;
+            if (IsZero(c))
+                return INF_ROOTS;
             else
-                return 0;
+                return NO_ROOTS;
         }
         else
         {
             *x1 = -c / b;
 
-            return 1;
+            return ONE_ROOT;
         }
     }
     else
@@ -73,48 +72,56 @@ int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
         double d = b*b - 4*a*c; // Решение через дискриминант
         if (d < 0)
         {
-            return 0;
+            return NO_ROOTS;
         }
-        else if (eqzero(d))
+        else if (IsZero(d))
         {
             *x1 = -b / (2 * a);
 
-            return 1;
+            return ONE_ROOT;
         }
         else
         {
-            *x1 = (-b - sqrt(d)) / (2 * a);
-            *x2 = (-b + sqrt(d)) / (2 * a);
+            double sqrt_d = sqrt(d);
+            *x1 = (-b - sqrt_d) / (2 * a);
+            *x2 = (-b + sqrt_d) / (2 * a);
 
-            return 2;
+            return TWO_ROOTS;
         }
     }
 }
 
-void print(int roots, double x1, double x2)
+void PrintSolution(int count_roots, double x1, double x2)
 {
-    switch (roots)
+    switch (count_roots)
     {
-        case 0: printf("Нет корней");
+        case NO_ROOTS: printf("Нет корней");
                 break;
-        case 1: printf("x = %lg", x1);
+        case ONE_ROOT: printf("x = %lg", x1);
                 break;
-        case 2: printf("x1 = %lg, x2 = %lg", x1, x2);
+        case TWO_ROOTS: printf("x1 = %lg, x2 = %lg", x1, x2);
                 break;
-        case INF: printf("x - любое число");
+        case INF_ROOTS: printf("x - любое число");
                 break;
-        default: printf("ОШИБКА: невозможное количество корней - %d", roots);
+        default: printf("ОШИБКА: невозможное количество корней - %d", count_roots);
                 break;
     }
 }
 
-void clearbuf(void)
+int ClearBuf(void)
 {
-    while (getchar() != '\n')
-        ;
+    int next_ch = '\0', count_not_spaces = 0;
+    while ((next_ch = getchar()) != '\n' && next_ch != EOF)
+    {
+        if (!isspace(next_ch))
+        {
+            ++count_not_spaces;
+        }
+    }
+    return count_not_spaces;
 }
 
-bool eqzero(double n)
+int IsZero(double n)
 {
     return (-EPSILON < n && n < EPSILON);
 }
