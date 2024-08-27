@@ -8,6 +8,11 @@ enum N_ROOTS {
     ONE_ROOT,
     TWO_ROOTS
 };
+enum RESPONSE_CODES {
+    UNEXPECTED_CHARACTER = -1,
+    UNEXPECTED_SPACE = -2,
+    SUCCESS = -3
+};
 const double EPSILON = 1e-9;
 
 struct Equation // отвечает за коэффициенты уравнения
@@ -21,14 +26,17 @@ struct Equation // отвечает за коэффициенты уравнения
 };
 
 void InputCoeffs(struct Equation *eq);
+
 void SolveQuadratic(struct Equation *eq);
-void PrintSolution(struct Equation eq);
 int IsZero(double n);
-int ClearBuf(int *quit); // очистка буфера ввода
 void Linear (struct Equation *eq);
 void NegativeD (enum N_ROOTS *count_roots);
 void ZeroD (struct Equation *eq);
 void PositiveD (double d, struct Equation *eq);
+
+void PrintSolution(struct Equation eq);
+int ClearBuf(void); // очистка буфера ввода
+int SearchForQuit(void);
 
 int main()
 {
@@ -47,21 +55,22 @@ void InputCoeffs(struct Equation *eq) // пользовательский ввод
 {
     int count_params = 0;
     int count_excess_ch = 0; // количество лишних символов (не пробелов) после ввода
-    int quit = 0;
+    int is_quit = 0;
     printf("Введите коэффициенты квадратного уравнения\n"
            "Чтобы выйти из программы, введите QUIT\n");
 
     while (true)
     {
         count_params = scanf("%lg %lg %lg", &(eq->a), &(eq->b), &(eq->c));
-        count_excess_ch = ClearBuf(&quit);
-        if (count_params == 3 && count_excess_ch == 0)
-        {
-            break;
-        }
-        else if (count_params == 0 && quit)
+        is_quit = SearchForQuit();
+        count_excess_ch = (is_quit == 0) ? 0 : ClearBuf(); // если SearchForQuit() не нашел символов, то буфер пуст
+        if (count_params == 0 && is_quit == SUCCESS && count_excess_ch == 0)
         {
             exit(0);
+        }
+        else if (count_params == 3 && is_quit == 0 && count_excess_ch == 0)
+        {
+            break;
         }
         else if (count_params != 3)
         {
@@ -79,7 +88,7 @@ void InputCoeffs(struct Equation *eq) // пользовательский ввод
 
 void SolveQuadratic(struct Equation *eq)
 {
-    if (IsZero(eq->a)) // проверка на нулевые коэффициенты
+    if (IsZero(eq->a)) // проверка на нулевой старший коэффициент
     {
         Linear(eq);
     }
@@ -119,7 +128,21 @@ void PrintSolution(struct Equation eq)
     }
 }
 
-int ClearBuf(int *quit)
+int ClearBuf(void)
+{
+    int next_ch = '\0', count_not_spaces = 0;
+
+    while ((next_ch = getchar()) != '\n' && next_ch != EOF)
+    {
+        if (!isspace(next_ch))
+        {
+            ++count_not_spaces;
+        }
+    }
+    return count_not_spaces;
+}
+
+int SearchForQuit(void)
 {
     int next_ch = '\0', count_not_spaces = 0;
 
@@ -138,22 +161,18 @@ int ClearBuf(int *quit)
                 ++cur_quit;
                 if (cur_quit == 4)
                 {
-                    *quit = 1;
+                    return SUCCESS;
                 }
             }
             else
             {
-                failed_quit = 1;
+                return UNEXPECTED_CHARACTER;
             }
         }
         else if (cur_quit)
         {
-            failed_quit = 1;
+            return UNEXPECTED_SPACE;
         }
-    }
-    if (failed_quit || count_not_spaces > 4)
-    {
-        *quit = 0;
     }
     return count_not_spaces;
 }
