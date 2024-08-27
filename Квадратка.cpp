@@ -2,50 +2,51 @@
 #include <TXLib.h>
 #include <math.h>
 
-enum {INF_ROOTS = -1, NO_ROOTS, ONE_ROOT, TWO_ROOTS};
+enum N_ROOTS {
+    INF_ROOTS = -1,
+    NO_ROOTS,
+    ONE_ROOT,
+    TWO_ROOTS
+};
 const double EPSILON = 1e-9;
 
-struct Coeffs // отвечает за коэффициенты уравнения
+struct Equation // отвечает за коэффициенты уравнения
 {
     double a;
     double b;
     double c;
-};
-
-struct Roots // отвечает за корни уравнения
-{
     double x1;
     double x2;
-    int count_roots;
+    enum N_ROOTS count_roots;
 };
 
-void InputCoeffs(double *a, double *b, double *c);
-int SolveQuadratic(double a, double b, double c, double *x1, double *x2);
-void PrintSolution(struct Roots roots);
+void InputCoeffs(struct Equation *eq);
+void SolveQuadratic(struct Equation *eq);
+void PrintSolution(struct Equation eq);
 int IsZero(double n);
 int ClearBuf(void); // очистка буфера ввода
 
 int main()
 {
-    struct Coeffs coeffs { 0, 0, 0 };
+    struct Equation eq = { 0, 0, 0, 0, 0, NO_ROOTS };
 
-    InputCoeffs(&coeffs.a, &coeffs.b, &coeffs.c);
+    InputCoeffs(&eq);
 
-    struct Roots roots { 0, 0, NO_ROOTS };
+    SolveQuadratic(&eq);
 
-    roots.count_roots = SolveQuadratic(coeffs.a, coeffs.b, coeffs.c, &roots.x1, &roots.x2);
+    PrintSolution(eq);
 
-    PrintSolution(roots);
+    return 0;
 }
 
-void InputCoeffs(double *a, double *b, double *c) // пользовательский ввод
+void InputCoeffs(struct Equation *eq) // пользовательский ввод
 {
     int count_params = 0;
     int count_excess_ch = 0; // количество лишних символов (не пробелов) после ввода
 
     while (true)
     {
-        count_params = scanf("%lg %lg %lg", a, b, c);
+        count_params = scanf("%lg %lg %lg", &(eq->a), &(eq->b), &(eq->c));
         count_excess_ch = ClearBuf();
         if (count_params == 3 && count_excess_ch == 0)
         {
@@ -65,61 +66,61 @@ void InputCoeffs(double *a, double *b, double *c) // пользовательский ввод
 
 }
 
-int SolveQuadratic(double a, double b, double c, double *x1, double *x2)
+void SolveQuadratic(struct Equation *eq)
 {
-    if (IsZero(a)) // проверка на нулевые коэффициенты
+    if (IsZero(eq->a)) // проверка на нулевые коэффициенты
     {
-        if (IsZero(b))
+        if (IsZero(eq->b))
         {
-            if (IsZero(c))
-                return INF_ROOTS;
+            if (IsZero(eq->c))
+                eq->count_roots = INF_ROOTS;
             else
-                return NO_ROOTS;
+                eq->count_roots = NO_ROOTS;
         }
         else
         {
-            *x1 = -c / b;
+            eq->x1 = -eq->c / eq->b;
 
-            return ONE_ROOT;
+            eq->count_roots = ONE_ROOT;
         }
     }
     else
     {
-        double d = b*b - 4*a*c; // решение через дискриминант
+        double d = (eq->b)*(eq->b) - 4*(eq->a)*(eq->c); // решение через дискриминант
         if (d < 0)
         {
-            return NO_ROOTS;
+            eq->count_roots = NO_ROOTS;
         }
         else if (IsZero(d))
         {
-            *x1 = -b / (2 * a);
+            eq->x1 = -(eq->b) / (2 * (eq->a));
 
-            return ONE_ROOT;
+            eq->count_roots = ONE_ROOT;
         }
         else
         {
             double sqrt_d = sqrt(d);
-            *x1 = (-b - sqrt_d) / (2 * a);
-            *x2 = (-b + sqrt_d) / (2 * a);
+            eq->x1 = (-(eq->b) - sqrt_d) / (2 * (eq->a));
+            eq->x2 = (-(eq->b) + sqrt_d) / (2 * (eq->a));
 
-            return TWO_ROOTS;
+            eq->count_roots = TWO_ROOTS;
         }
     }
 }
 
-void PrintSolution(struct Roots roots)
+void PrintSolution(struct Equation eq)
 {
-    switch (roots.count_roots)
+    switch (eq.count_roots)
     {
         case NO_ROOTS: printf("Нет корней");
                 break;
-        case ONE_ROOT: printf("x = %lg", roots.x1);
+        case ONE_ROOT: printf("x = %lg", eq.x1);
                 break;
-        case TWO_ROOTS: printf("x1 = %lg, x2 = %lg", roots.x1, roots.x2);
+        case TWO_ROOTS: printf("x1 = %lg, x2 = %lg", eq.x1, eq.x2);
                 break;
         case INF_ROOTS: printf("x - любое число");
                 break;
-        default: printf("ОШИБКА: невозможное количество корней - %d", roots.count_roots);
+        default: printf("ОШИБКА: невозможное количество корней - %d", eq.count_roots);
                 break;
     }
 }
