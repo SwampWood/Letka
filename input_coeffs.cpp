@@ -1,4 +1,7 @@
+#include <stdio.h>
+#include <TXLib.h>
 #include "input_coeffs.h"
+#include "consts.h"
 
 void InputCoeffs(struct Equation *eq) // пользовательский ввод
 {

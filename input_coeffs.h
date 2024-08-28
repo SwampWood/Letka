@@ -14,4 +14,4 @@ void InputCoeffs (struct Equation *eq);
 int ClearBuf (void); // очистка буфера ввода
 enum RESPONSE_CODES_FOR_QUIT SearchForQuit (void);
 
-#endif
+#endif // INPUT_COEFFS_H_INCLUDED

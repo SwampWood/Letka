@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1724878163 source:c:\users\danya\documents\github\letka2\main.cpp
+	<stdio.h>
+	<TXLib.h>
+	<math.h>
+	"input_coeffs.h"
+	"consts.h"
+
+1724877037 c:\users\danya\documents\github\letka2\input_coeffs.h
+
+1724878163 c:\users\danya\documents\github\letka2\consts.h
+
