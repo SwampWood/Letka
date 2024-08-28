@@ -246,7 +246,7 @@ enum N_ROOTS SolveForZeroD (struct Equation *eq)
 
 enum N_ROOTS SolveForPositiveD (double d, struct Equation *eq)
 {
-    assert(&eq != NULL);
+    assert(eq != NULL);
 
     assert(&(eq->x1) != NULL);
     assert(&(eq->x2) != NULL);
