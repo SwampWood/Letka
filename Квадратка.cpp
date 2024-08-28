@@ -9,11 +9,16 @@ enum N_ROOTS {
     TWO_ROOTS
 };
 enum RESPONSE_CODES_FOR_QUIT {
-    SUCCESS = -1,
+    SUCCESSFUL_QUIT = -1,
     CHARACTER_NOT_FOUND = 0,
     CHARACTER_FOUND = 1,
     UNEXPECTED_CHARACTER = -2,
-    UNEXPECTED_SPACE = -3,
+    UNEXPECTED_SPACE = -3
+
+};
+enum RESPONSE_CODES_FOR_PRINT {
+    SUCCESSFUL_PRINT = 0,
+    UNEXPECTED_N_ROOTS = 1
 
 };
 
@@ -38,9 +43,9 @@ enum N_ROOTS SolveForNegativeD (void);
 enum N_ROOTS SolveForZeroD (struct Equation *eq);
 enum N_ROOTS SolveForPositiveD (double d, struct Equation *eq);
 
-void PrintSolution(struct Equation eq);
-int ClearBuf(void); // очистка буфера ввода
-enum RESPONSE_CODES_FOR_QUIT SearchForQuit(void);
+enum RESPONSE_CODES_FOR_PRINT PrintSolution (struct Equation eq);
+int ClearBuf (void); // очистка буфера ввода
+enum RESPONSE_CODES_FOR_QUIT SearchForQuit (void);
 
 int main()
 {
@@ -57,13 +62,9 @@ int main()
 
 void InputCoeffs(struct Equation *eq) // пользовательский ввод
 {
-    assert(isfinite(eq->a));
-    assert(isfinite(eq->b));
-    assert(isfinite(eq->c));
-
-    assert(&(eq->x1) != NULL);
-    assert(&(eq->x2) != NULL);
-    assert(&(eq->x1) != &(eq->x2));
+    assert(&(eq->a) != NULL);
+    assert(&(eq->b) != NULL);
+    assert(&(eq->c) != NULL);
 
     int count_params = 0; // количество полученных на вводе чисел
     int count_excess_ch = 0; // количество лишних символов (не пробелов) после ввода
@@ -75,8 +76,8 @@ void InputCoeffs(struct Equation *eq) // пользовательский ввод
     {
         count_params = scanf("%lg %lg %lg", &(eq->a), &(eq->b), &(eq->c));
         is_quit = SearchForQuit();
-        count_excess_ch = (is_quit == CHARACTER_NOT_FOUND) ? 0 : ClearBuf(); // если SearchForQuit() не нашел символов, то буфер ужк пуст
-        if (count_params == 0 && is_quit == SUCCESS && count_excess_ch == 0)
+        count_excess_ch = (is_quit == CHARACTER_NOT_FOUND) ? 0 : ClearBuf(); // если SearchForQuit() не нашел символов, то буфер уже пуст
+        if (count_params == 0 && is_quit == SUCCESSFUL_QUIT && count_excess_ch == 0)
         {
             exit(0);
         }
@@ -131,12 +132,12 @@ void SolveQuadratic(struct Equation *eq)
     }
 }
 
-void PrintSolution(struct Equation eq)
+enum RESPONSE_CODES_FOR_PRINT PrintSolution (struct Equation eq)
 {
-    assert(&(eq->x1) != NULL);
-    assert(&(eq->x2) != NULL);
-    assert(&(eq->count_roots) != NULL);
-    assert(&(eq->x1) != &(eq->x2));
+    assert(&(eq.x1) != NULL);
+    assert(&(eq.x2) != NULL);
+    assert(&(eq.count_roots) != NULL);
+    assert(&(eq.x1) != &(eq.x2));
 
     switch (eq.count_roots)
     {
@@ -149,8 +150,9 @@ void PrintSolution(struct Equation eq)
         case INF_ROOTS: printf("x - любое число");
                 break;
         default: printf("ОШИБКА: невозможное количество корней - %d", eq.count_roots);
-                break;
+                return UNEXPECTED_N_ROOTS;
     }
+    return SUCCESSFUL_PRINT;
 }
 
 int ClearBuf(void)
@@ -171,7 +173,7 @@ enum RESPONSE_CODES_FOR_QUIT SearchForQuit(void)
 {
     int next_ch = '\0', count_not_spaces = 0;
 
-    int cur_quit = 0, failed_quit = 0; // текущий символ массива
+    int cur_quit_index = 0; // текущий символ массива
     char quit_string[4] = { 'Q', 'U', 'I', 'T' };
 
     while ((next_ch = getchar()) != '\n' && next_ch != EOF)
@@ -181,12 +183,12 @@ enum RESPONSE_CODES_FOR_QUIT SearchForQuit(void)
             ++count_not_spaces;
 
             // проверяем, не вводит ли пользователь "QUIT"
-            if (cur_quit < 4 && next_ch == quit_string[cur_quit])
+            if (cur_quit_index < 4 && next_ch == quit_string[cur_quit_index])
             {
-                ++cur_quit;
-                if (cur_quit == 4)
+                ++cur_quit_index;
+                if (cur_quit_index == 4)
                 {
-                    return SUCCESS;
+                    return SUCCESSFUL_QUIT;
                 }
             }
             else
@@ -194,7 +196,7 @@ enum RESPONSE_CODES_FOR_QUIT SearchForQuit(void)
                 return UNEXPECTED_CHARACTER;
             }
         }
-        else if (cur_quit)
+        else if (cur_quit_index)
         {
             return UNEXPECTED_SPACE;
         }
@@ -214,7 +216,7 @@ int IsZero(double n)
     return (-EPSILON < n && n < EPSILON);
 }
 
-void SolveForLinear (struct Equation *eq)
+enum N_ROOTS SolveForLinear (struct Equation *eq)
 {
     if (IsZero(eq->b))
     {
@@ -232,19 +234,19 @@ void SolveForLinear (struct Equation *eq)
 
 }
 
-void SolveForNegativeD (void)
+enum N_ROOTS SolveForNegativeD (void)
 {
     return  NO_ROOTS;
 }
 
-void SolveForZeroD (struct Equation *eq)
+enum N_ROOTS SolveForZeroD (struct Equation *eq)
 {
     eq->x1 = -(eq->b) / (2 * (eq->a));
 
     return ONE_ROOT;
 }
 
-void SolveForPositiveD (double d, struct Equation *eq)
+enum N_ROOTS SolveForPositiveD (double d, struct Equation *eq)
 {
 
     assert(&(eq->x1) != NULL);
