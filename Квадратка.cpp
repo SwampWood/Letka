@@ -8,15 +8,13 @@ enum N_ROOTS {
     ONE_ROOT,
     TWO_ROOTS
 };
-enum RESPONSE_CODES_FOR_QUIT {
+enum RETURN_CODES_FOR_QUIT {
     SUCCESSFUL_QUIT = -1,
     CHARACTER_NOT_FOUND = 0,
     CHARACTER_FOUND = 1,
-    UNEXPECTED_CHARACTER = -2,
-    UNEXPECTED_SPACE = -3
 
 };
-enum RESPONSE_CODES_FOR_PRINT {
+enum RETURN_CODES_FOR_PRINT {
     SUCCESSFUL_PRINT = 0,
     UNEXPECTED_N_ROOTS = 1
 
@@ -34,7 +32,7 @@ struct Equation // отвечает за коэффициенты уравнения
     enum N_ROOTS count_roots;
 };
 
-void InputCoeffs (struct Equation *eq);
+int InputCoeffs (struct Equation *eq);
 
 void SolveQuadratic (struct Equation *eq);
 int IsZero (double n);
@@ -43,15 +41,19 @@ enum N_ROOTS SolveForNegativeD (void);
 enum N_ROOTS SolveForZeroD (struct Equation *eq);
 enum N_ROOTS SolveForPositiveD (double d, struct Equation *eq);
 
-enum RESPONSE_CODES_FOR_PRINT PrintSolution (struct Equation eq);
+enum RETURN_CODES_FOR_PRINT PrintSolution (struct Equation eq);
 int ClearBuf (void); // очистка буфера ввода
-enum RESPONSE_CODES_FOR_QUIT SearchForQuit (void);
+enum RETURN_CODES_FOR_QUIT SearchForQuit (void);
 
 int main()
 {
-    struct Equation eq = { NAN, 0, 0, 0, 0, NO_ROOTS };
+    struct Equation eq = { 0, 0, 0, 0, 0, NO_ROOTS };
 
-    InputCoeffs(&eq);
+    if (InputCoeffs(&eq))
+    {
+        printf("Вы завершили выполнение программы");
+        return 0;
+    }
 
     SolveQuadratic(&eq);
 
@@ -60,28 +62,37 @@ int main()
     return 0;
 }
 
-void InputCoeffs(struct Equation *eq) // пользовательский ввод
+int InputCoeffs(struct Equation *eq) // пользовательский ввод
 {
+    assert(eq != NULL);
+
+    assert(isfinite(eq->a));
+    assert(isfinite(eq->b));
+    assert(isfinite(eq->c));
+
     assert(&(eq->a) != NULL);
     assert(&(eq->b) != NULL);
     assert(&(eq->c) != NULL);
 
     int count_params = 0; // количество полученных на вводе чисел
     int count_excess_ch = 0; // количество лишних символов (не пробелов) после ввода
-    int is_quit = 0; // флаг для выхода при вводе
+    enum RETURN_CODES_FOR_QUIT is_quit = CHARACTER_NOT_FOUND; // флаг для выхода при вводе
     printf("Введите коэффициенты квадратного уравнения\n"
            "Чтобы выйти из программы, введите QUIT\n");
 
     while (true)
     {
         count_params = scanf("%lg %lg %lg", &(eq->a), &(eq->b), &(eq->c));
-        is_quit = SearchForQuit();
-        count_excess_ch = (is_quit == CHARACTER_NOT_FOUND) ? 0 : ClearBuf(); // если SearchForQuit() не нашел символов, то буфер уже пуст
-        if (count_params == 0 && is_quit == SUCCESSFUL_QUIT && count_excess_ch == 0)
+        if (count_params == 0)
         {
-            exit(0);
+            is_quit = SearchForQuit();
         }
-        else if (count_params == 3 && is_quit == 0 && count_excess_ch == 0)
+        count_excess_ch = ClearBuf(); // если SearchForQuit() не нашел символов, то буфер уже пуст
+        if (is_quit == SUCCESSFUL_QUIT and count_excess_ch == 0)
+        {
+            return 1; // досрочное завершение программы
+        }
+        else if (count_params == 3 && is_quit == CHARACTER_NOT_FOUND && count_excess_ch == 0)
         {
             break;
         }
@@ -96,14 +107,19 @@ void InputCoeffs(struct Equation *eq) // пользовательский ввод
 
         printf("Попробуйте снова\n");
     }
+    return 0; // нормальное продолжение программы
 
 }
 
 void SolveQuadratic(struct Equation *eq)
 {
+    assert(&eq != NULL);
+
     assert(isfinite(eq->a));
     assert(isfinite(eq->b));
     assert(isfinite(eq->c));
+    assert(isfinite(eq->x1));
+    assert(isfinite(eq->x2));
 
     assert(&(eq->x1) != NULL);
     assert(&(eq->x2) != NULL);
@@ -132,8 +148,13 @@ void SolveQuadratic(struct Equation *eq)
     }
 }
 
-enum RESPONSE_CODES_FOR_PRINT PrintSolution (struct Equation eq)
+enum RETURN_CODES_FOR_PRINT PrintSolution (struct Equation eq)
 {
+    assert(&eq != NULL);
+
+    assert(isfinite(eq->x1));
+    assert(isfinite(eq->x2));
+
     assert(&(eq.x1) != NULL);
     assert(&(eq.x2) != NULL);
     assert(&(eq.count_roots) != NULL);
@@ -169,46 +190,16 @@ int ClearBuf(void)
     return count_not_spaces;
 }
 
-enum RESPONSE_CODES_FOR_QUIT SearchForQuit(void)
+enum RETURN_CODES_FOR_QUIT SearchForQuit(void)
 {
-    int next_ch = '\0', count_not_spaces = 0;
+    char check_string[] = "empty";
 
-    int cur_quit_index = 0; // текущий символ массива
-    char quit_string[4] = { 'Q', 'U', 'I', 'T' };
-
-    while ((next_ch = getchar()) != '\n' && next_ch != EOF)
+    int result = scanf("%s", check_string); // строка из пробелов - 0, иначе - 1
+    if (strcmp(check_string, "QUIT"))
     {
-        if (!isspace(next_ch))
-        {
-            ++count_not_spaces;
-
-            // проверяем, не вводит ли пользователь "QUIT"
-            if (cur_quit_index < 4 && next_ch == quit_string[cur_quit_index])
-            {
-                ++cur_quit_index;
-                if (cur_quit_index == 4)
-                {
-                    return SUCCESSFUL_QUIT;
-                }
-            }
-            else
-            {
-                return UNEXPECTED_CHARACTER;
-            }
-        }
-        else if (cur_quit_index)
-        {
-            return UNEXPECTED_SPACE;
-        }
+        return result ? CHARACTER_FOUND : CHARACTER_NOT_FOUND;
     }
-    if (count_not_spaces)
-    {
-        return CHARACTER_FOUND;
-    }
-    else
-    {
-        return CHARACTER_NOT_FOUND;
-    }
+    return SUCCESSFUL_QUIT;
 }
 
 int IsZero(double n)
@@ -236,7 +227,7 @@ enum N_ROOTS SolveForLinear (struct Equation *eq)
 
 enum N_ROOTS SolveForNegativeD (void)
 {
-    return  NO_ROOTS;
+    return NO_ROOTS;
 }
 
 enum N_ROOTS SolveForZeroD (struct Equation *eq)
