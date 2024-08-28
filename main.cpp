@@ -152,8 +152,8 @@ enum RETURN_CODES_FOR_PRINT PrintSolution (struct Equation eq)
 {
     assert(&eq != NULL);
 
-    assert(isfinite(eq->x1));
-    assert(isfinite(eq->x2));
+    assert(isfinite(eq.x1));
+    assert(isfinite(eq.x2));
 
     assert(&(eq.x1) != NULL);
     assert(&(eq.x2) != NULL);
@@ -209,6 +209,8 @@ int IsZero(double n)
 
 enum N_ROOTS SolveForLinear (struct Equation *eq)
 {
+    assert(eq != NULL);
+
     if (IsZero(eq->b))
     {
         if (IsZero(eq->c))
@@ -232,6 +234,11 @@ enum N_ROOTS SolveForNegativeD (void)
 
 enum N_ROOTS SolveForZeroD (struct Equation *eq)
 {
+    assert(eq != NULL);
+
+    assert(isfinite(eq->a));
+    assert(isfinite(eq->b));
+
     eq->x1 = -(eq->b) / (2 * (eq->a));
 
     return ONE_ROOT;
@@ -239,6 +246,7 @@ enum N_ROOTS SolveForZeroD (struct Equation *eq)
 
 enum N_ROOTS SolveForPositiveD (double d, struct Equation *eq)
 {
+    assert(&eq != NULL);
 
     assert(&(eq->x1) != NULL);
     assert(&(eq->x2) != NULL);
