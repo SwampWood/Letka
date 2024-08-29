@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<BrowseTracker_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="print_solution.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="84" topLine="0" />
+		<BrowseMarks positions="59,122" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="145" topLine="0" />
+		<BrowseMarks positions="59,116" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="input_coeffs.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="942" topLine="17" />
+		<BrowseMarks positions="67,1741" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="input_coeffs.h" open="0" top="0" tabpos="0">
+		<Cursor position="189" topLine="0" />
+		<BrowseMarks positions="187,295" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="solve_quadratic.h" open="0" top="0" tabpos="0">
+		<Cursor position="365" topLine="1" />
+		<BrowseMarks positions="365" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="equation.h" open="0" top="0" tabpos="0">
+		<Cursor position="60" topLine="0" />
+		<BrowseMarks positions="" />
+		<Book_Marks positions="" />
+	</File>
+</BrowseTracker_layout_file>

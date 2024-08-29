@@ -32,7 +32,14 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="equation.h" />
+		<Unit filename="input_coeffs.cpp" />
+		<Unit filename="input_coeffs.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="print_solution.cpp" />
+		<Unit filename="print_solution.h" />
+		<Unit filename="solve_quadratic.cpp" />
+		<Unit filename="solve_quadratic.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

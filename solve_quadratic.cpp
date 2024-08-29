@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <TXLib.h>
 #include "solve_quadratic.h"
-#include "equation.h"
 
 
 void SolveQuadratic(struct Equation *eq)

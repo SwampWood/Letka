@@ -20,7 +20,7 @@
 
 1724919094 c:\users\даниэль\desktop\рабочая_папка\letka\input_coeffs.h
 
-1724919788 source:c:\users\даниэль\desktop\рабочая_папка\letka\input_coeffs.cpp
+1724928691 source:c:\users\даниэль\desktop\рабочая_папка\letka\input_coeffs.cpp
 	<stdio.h>
 	<TXLib.h>
 	"input_coeffs.h"
@@ -28,9 +28,8 @@
 
 1724919721 c:\users\даниэль\desktop\рабочая_папка\letka\solve_quadratic.h
 
-1724919468 source:c:\users\даниэль\desktop\рабочая_папка\letka\solve_quadratic.cpp
+1724927182 source:c:\users\даниэль\desktop\рабочая_папка\letka\solve_quadratic.cpp
 	<stdio.h>
 	<TXLib.h>
 	"solve_quadratic.h"
-	"equation.h"
 

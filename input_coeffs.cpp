@@ -28,7 +28,7 @@ int InputCoeffs(struct Equation *eq) // пользовательский ввод
         {
             is_quit = SearchForQuit();
         }
-        count_excess_ch = ClearBuf(); // если SearchForQuit() не нашел символов, то буфер уже пуст
+        count_excess_ch = ClearBuf();
         if (is_quit == SUCCESSFUL_QUIT and count_excess_ch == 0)
         {
             return 1; // досрочное завершение программы
