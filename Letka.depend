@@ -1,9 +1,9 @@
 # depslib dependency file v1.0
-1724918959 source:c:\users\даниэль\desktop\рабочая_папка\letka\print_solution.cpp
+1724919788 source:c:\users\даниэль\desktop\рабочая_папка\letka\print_solution.cpp
 	<stdio.h>
 	<TXLib.h>
 	<math.h>
-	"equation.h"
+	"solve_quadratic.h"
 	"print_solution.h"
 
 1724919714 c:\users\даниэль\desktop\рабочая_папка\letka\equation.h
@@ -20,11 +20,11 @@
 
 1724919094 c:\users\даниэль\desktop\рабочая_папка\letka\input_coeffs.h
 
-1724919235 source:c:\users\даниэль\desktop\рабочая_папка\letka\input_coeffs.cpp
+1724919788 source:c:\users\даниэль\desktop\рабочая_папка\letka\input_coeffs.cpp
 	<stdio.h>
 	<TXLib.h>
 	"input_coeffs.h"
-	"equation.h"
+	"solve_quadratic.h"
 
 1724919721 c:\users\даниэль\desktop\рабочая_папка\letka\solve_quadratic.h
 

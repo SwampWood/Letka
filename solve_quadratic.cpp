@@ -6,7 +6,7 @@
 
 void SolveQuadratic(struct Equation *eq)
 {
-    assert(&eq != NULL);
+    assert(eq != NULL);
 
     assert(isfinite(eq->a));
     assert(isfinite(eq->b));
